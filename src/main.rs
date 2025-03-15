@@ -1,16 +1,37 @@
-mod server;
-mod router;
-mod routes;
-mod models;
-mod db;
-mod fetcher;
-mod utils;
+use dotenv::dotenv;
 
-use tokio;
+use std::error::Error;
+use tracing::info;
+use tokio::signal;
+
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn Error>> {
+
+    dotenv().ok();
     tracing_subscriber::fmt::init();
-    println!("Starting portfolio tracker...");
+
+    info!("Spinning up server...");
+
+
+
+
+
+    loop {
+        tokio::select! {
+
+
+
+            _ = signal::ctrl_c() => {
+                info!("Shutting down server...");
+                break;
+            }
+        }
+    }
+
+
+
+
+
     Ok(())
 }
