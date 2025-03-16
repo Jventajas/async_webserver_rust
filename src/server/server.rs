@@ -3,6 +3,7 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
 use std::error::Error;
 use std::convert::TryFrom;
+use std::sync::Arc;
 use getset::Getters;
 use tracing::info;
 
@@ -10,6 +11,8 @@ use crate::server::errors::ServerError;
 use crate::server::methods::HttpMethod;
 use crate::server::request::Request;
 use crate::server::router::Router;
+use crate::server::route::Route;
+use crate::routes::root::Root;
 
 pub struct HttpServer {
     router: Router,
@@ -17,16 +20,16 @@ pub struct HttpServer {
 
 impl HttpServer {
     pub fn new() -> Self {
-        let router = Router::new();
+        let mut routes: Vec<Arc<dyn Route>> = Vec::new();
+        let root = Arc::new(Root::new());
+        routes.push(root);
 
-
-
-
+        let mut router = Router::new(routes);
 
 
 
         Self {
-            router: router,
+            router,
         }
     }
 

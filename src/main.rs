@@ -1,4 +1,5 @@
 mod server;
+mod routes;
 
 use dotenv::dotenv;
 use tracing::{info, error};
@@ -7,7 +8,7 @@ use std::error::Error;
 use tokio::signal;
 use tokio::net::TcpListener;
 
-use crate::server::http::HttpServer;
+use crate::server::server::HttpServer;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

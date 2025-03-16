@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::sync::Arc;
 use crate::server::errors::ServerError;
 use crate::server::request::Request;
@@ -12,8 +11,10 @@ pub struct Router {
 }
 
 impl Router {
-    pub fn new() -> Self {
-        Self { routes: Vec::new() }
+    pub fn new(routes: Vec<Arc<dyn Route>>) -> Self {
+        Self {
+            routes
+        }
     }
 
     pub fn add_route(&mut self, route: Arc<dyn Route>) {
