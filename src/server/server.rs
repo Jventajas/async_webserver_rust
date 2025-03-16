@@ -1,21 +1,33 @@
 use std::collections::HashMap;
-use tokio::io::{AsyncReadExt, BufReader};
+use tokio::io::{AsyncReadExt, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
 use std::error::Error;
 use std::convert::TryFrom;
 use getset::Getters;
 use tracing::info;
 
-use crate::server::errors::HttpParseError;
-use crate::server::http_methods::HttpMethod;
+use crate::server::errors::ServerError;
+use crate::server::methods::HttpMethod;
 use crate::server::request::Request;
+use crate::server::router::Router;
 
 pub struct HttpServer {
+    router: Router,
 }
 
 impl HttpServer {
     pub fn new() -> Self {
-        Self { }
+        let router = Router::new();
+
+
+
+
+
+
+
+        Self {
+            router: router,
+        }
     }
 
     pub async fn handle_connection(&self, mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
@@ -28,7 +40,12 @@ impl HttpServer {
 
         info!("Parsed request: \n\n{:?}", request);
 
+        let response = self.router.route(request).await?;
+        let response_str: String = response.into();
 
+        info!("Response: \n\n{:?}", response_str);
+
+        stream.write(response_str.as_bytes()).await?;
 
 
 

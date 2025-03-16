@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use getset::Getters;
-use crate::server::errors::HttpParseError;
-use crate::server::http_methods::HttpMethod;
+use crate::server::errors::ServerError;
+use crate::server::methods::HttpMethod;
 
 #[derive(Debug, Clone, Getters)]
 #[getset(get = "pub")]
@@ -26,17 +26,17 @@ impl Request {
 }
 
 impl TryFrom<&str> for Request {
-    type Error = HttpParseError;
+    type Error = ServerError;
 
     fn try_from(request_str: &str) -> Result<Self, Self::Error> {
         let mut lines = request_str.lines();
 
         // Parse the request line (e.g., "GET /path?query=value HTTP/1.1")
-        let request_line = lines.next().ok_or(HttpParseError::InvalidFormat)?;
+        let request_line = lines.next().ok_or(ServerError::InvalidFormat)?;
         let mut parts = request_line.split_whitespace();
 
-        let method_str = parts.next().ok_or(HttpParseError::InvalidRequestLine)?;
-        let url_str = parts.next().ok_or(HttpParseError::InvalidRequestLine)?;
+        let method_str = parts.next().ok_or(ServerError::InvalidRequestLine)?;
+        let url_str = parts.next().ok_or(ServerError::InvalidRequestLine)?;
 
         // Parse the HTTP method
         let method = HttpMethod::try_from(method_str)?;
@@ -102,7 +102,7 @@ impl TryFrom<&str> for Request {
 }
 
 
-fn parse_url(url_str: &str) -> Result<(String, HashMap<String, String>), HttpParseError> {
+fn parse_url(url_str: &str) -> Result<(String, HashMap<String, String>), ServerError> {
     let mut query_params = HashMap::new();
     let parts: Vec<&str> = url_str.split('?').collect();
     let path = parts[0].to_string();
@@ -123,10 +123,10 @@ fn parse_url(url_str: &str) -> Result<(String, HashMap<String, String>), HttpPar
     Ok((path, query_params))
 }
 
-fn parse_header(header_line: &str) -> Result<(String, String), HttpParseError> {
+fn parse_header(header_line: &str) -> Result<(String, String), ServerError> {
     let parts: Vec<&str> = header_line.splitn(2, ':').collect();
     if parts.len() != 2 {
-        return Err(HttpParseError::InvalidHeader);
+        return Err(ServerError::InvalidHeader);
     }
 
     let key = parts[0].trim().to_lowercase();
