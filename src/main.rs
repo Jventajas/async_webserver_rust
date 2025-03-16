@@ -28,7 +28,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let listener = TcpListener::bind(format!("{}:{}", ip_address, port)).await?;
 
 
-
     loop {
         tokio::select! {
             Ok((stream, _)) = listener.accept() => {
@@ -48,9 +47,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-
-
-
-
+    info!("Server shutdown complete");
     Ok(())
 }
