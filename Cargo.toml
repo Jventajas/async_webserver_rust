@@ -4,14 +4,21 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+dotenv = "0.15.0"
 tokio = { version = "1.0", features = ["full"] } # Async runtime
 httparse = "1.8" # Lightweight HTTP parsing
 tokio-tungstenite = "0.26.2" # WebSocket support
 sqlx = { version = "0.8.3", features = ["runtime-tokio", "sqlite"] } # Database
-askama = "0.12" # Templating
+askama = "0.12.1" # Templating
 reqwest = { version = "0.12.12", features = ["json"] } # HTTP client
 serde = { version = "1.0", features = ["derive"] } # Serialization
 serde_json = "1.0" # JSON handling
 tracing = "0.1" # Logging
 tracing-subscriber = "0.3" # Logging subscriber
 thiserror = "2.0.12" # Error handling
+chrono = { version = "0.4.40", features = ["serde"] }
+async-trait = "0.1.87"
+regex = "1.11.1"
+futures-util = "0.3.31"
+log = "0.4.26"
+getset = "0.1.2"

@@ -1,5 +1,6 @@
 mod server;
 mod routes;
+mod models;
 
 use dotenv::dotenv;
 use tracing::{info, error};

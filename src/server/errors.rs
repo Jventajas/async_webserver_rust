@@ -1,5 +1,5 @@
 #[derive(Debug, thiserror::Error)]
-pub enum HttpParseError {
+pub enum ServerError {
     #[error("invalid request format")]
     InvalidFormat,
     #[error("invalid HTTP method: {0}")]
@@ -12,4 +12,12 @@ pub enum HttpParseError {
     MissingRequiredHeaders,
     #[error("error parsing URL: {0}")]
     UrlParseError(String),
+    #[error("template error: {0}")]
+    TemplateError(String)
+}
+
+impl From<askama::Error> for ServerError {
+    fn from(err: askama::Error) -> Self {
+        ServerError::TemplateError(err.to_string())
+    }
 }

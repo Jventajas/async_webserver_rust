@@ -34,11 +34,14 @@ impl HttpServer {
     }
 
     pub async fn handle_connection(&self, mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
-        let mut buffer = Vec::new();
-        let mut reader = BufReader::new(&mut stream);
+        let mut buffer = [0; 4096];
 
-        reader.read_to_end(&mut buffer).await?;
-        let request_string = String::from_utf8(buffer)?;
+        let n = stream.read(&mut buffer).await?;
+        if n == 0 {
+            return Ok(());
+        }
+
+        let request_string = String::from_utf8_lossy(&buffer[0..n]).to_string();
         let request = Request::try_from(request_string.as_str())?;
 
         info!("Parsed request: \n\n{:?}", request);
@@ -48,14 +51,10 @@ impl HttpServer {
 
         info!("Response: \n\n{:?}", response_str);
 
-        stream.write(response_str.as_bytes()).await?;
-
-
-
-
-        // Process the request and generate a response
-        // ...
+        stream.write_all(response_str.as_bytes()).await?;
+        stream.flush().await?;
 
         Ok(())
+
     }
 }
