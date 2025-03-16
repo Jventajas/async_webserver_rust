@@ -1,49 +1,7 @@
 use std::collections::HashMap;
-use tokio::io::{AsyncReadExt, BufReader};
-use tokio::net::TcpStream;
-use std::error::Error;
-use std::convert::TryFrom;
 use getset::Getters;
-use tracing::info;
-
-
-#[derive(Debug, thiserror::Error)]
-pub enum HttpParseError {
-    #[error("invalid request format")]
-    InvalidFormat,
-    #[error("invalid HTTP method: {0}")]
-    InvalidMethod(String),
-    #[error("invalid request line")]
-    InvalidRequestLine,
-    #[error("invalid header format")]
-    InvalidHeader,
-    #[error("missing required headers")]
-    MissingRequiredHeaders,
-    #[error("error parsing URL: {0}")]
-    UrlParseError(String),
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum HttpMethod {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-}
-
-impl TryFrom<&str> for HttpMethod {
-    type Error = HttpParseError;
-
-    fn try_from(method_str: &str) -> Result<Self, Self::Error> {
-        match method_str {
-            "GET" => Ok(HttpMethod::GET),
-            "POST" => Ok(HttpMethod::POST),
-            "PUT" => Ok(HttpMethod::PUT),
-            "DELETE" => Ok(HttpMethod::DELETE),
-            _ => Err(HttpParseError::InvalidMethod(method_str.to_string())),
-        }
-    }
-}
+use crate::server::errors::HttpParseError;
+use crate::server::http_methods::HttpMethod;
 
 #[derive(Debug, Clone, Getters)]
 #[getset(get = "pub")]
@@ -143,6 +101,7 @@ impl TryFrom<&str> for Request {
     }
 }
 
+
 fn parse_url(url_str: &str) -> Result<(String, HashMap<String, String>), HttpParseError> {
     let mut query_params = HashMap::new();
     let parts: Vec<&str> = url_str.split('?').collect();
@@ -174,42 +133,4 @@ fn parse_header(header_line: &str) -> Result<(String, String), HttpParseError> {
     let value = parts[1].trim().to_string();
 
     Ok((key, value))
-}
-
-#[derive(Debug, Clone)]
-pub struct Response {
-    status_code: u16,
-    status_text: String,
-    headers: HashMap<String, String>,
-    body: Vec<u8>,
-}
-
-pub struct HttpServer {
-}
-
-impl HttpServer {
-    pub fn new() -> Self {
-        Self { }
-    }
-
-    pub async fn handle_connection(&self, mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
-        let mut buffer = Vec::new();
-        let mut reader = BufReader::new(&mut stream);
-
-        reader.read_to_end(&mut buffer).await?;
-        let request_string = String::from_utf8(buffer)?;
-
-        info!("Received request:\n\n{}", request_string);
-
-        // Parse the request string into a Request object
-        let request = Request::try_from(request_string.as_str())?;
-
-        // Now you can handle the parsed request
-        info!("Parsed request: {:?}", request);
-
-        // Process the request and generate a response
-        // ...
-
-        Ok(())
-    }
 }
