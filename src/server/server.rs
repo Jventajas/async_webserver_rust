@@ -13,6 +13,8 @@ use crate::server::request::Request;
 use crate::server::router::Router;
 use crate::server::route::Route;
 use crate::routes::root::Root;
+use crate::routes::static_files::StaticFiles;
+
 
 pub struct HttpServer {
     router: Router,
@@ -21,8 +23,12 @@ pub struct HttpServer {
 impl HttpServer {
     pub fn new() -> Self {
         let mut routes: Vec<Arc<dyn Route>> = Vec::new();
+
         let root = Arc::new(Root::new());
         routes.push(root);
+
+        let static_files = Arc::new(StaticFiles::new("static".to_string()));
+        routes.push(static_files);
 
         let mut router = Router::new(routes);
 
