@@ -1,6 +1,7 @@
 mod server;
 mod routes;
 mod models;
+mod services;
 
 use dotenv::dotenv;
 use tracing::{info, error};
@@ -10,6 +11,7 @@ use tokio::signal;
 use tokio::net::TcpListener;
 
 use crate::server::server::HttpServer;
+use crate::services::data_sync::DataSyncService;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -22,7 +24,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .expect("IP_ADDRESS environment variable not set, server cannot start");
     let port = std::env::var("PORT")
         .expect("PORT environment variable not set, server cannot start");
-    
+
+    info!("Starting data sync service...");
+    DataSyncService::new().sync_data(900).await;
+
     info!("Spinning up server...");
 
     let http_server = HttpServer::new();
