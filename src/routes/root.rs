@@ -26,7 +26,8 @@ impl Root {
 #[async_trait::async_trait]
 impl Route for Root {
     async fn handle(&self, req: Request) -> Result<Response, ServerError> {
-        let indexes = vec![];
+        let indexes = vec![Index::new(1, "SYMBOL".to_string(), "Sample Name".to_string(), 100.0, 1.5, chrono::Utc::now())
+        ];
 
         if let Some(accept) = req.headers().get("accept") {
             if accept.contains("application/json") {

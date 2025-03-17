@@ -9,6 +9,23 @@
 <body>
 <h1>Market Indexes</h1>
 
+<div class="index-grid">
+    {% for index in indexes %}
+    <div class="index-card">
+        <div class="index-name">{{ index.name }}</div>
+        <div class="index-symbol">{{ index.symbol }}</div>
+        <div class="index-price">${{ index.price }}</div>
+        <div class="index-change {% if index.change_percent >= 0.0 %}positive{% else %}negative{% endif %}">
+            {% if index.change_percent >= 0.0 %}+{% endif %}{{ index.change_percent }}%
+        </div>
+
+        <div class="index-updated">
+            Updated: {{ index.last_updated.format("%Y-%m-%d %H:%M:%S") }}
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
 
 
 

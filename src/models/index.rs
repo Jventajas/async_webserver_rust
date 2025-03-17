@@ -10,3 +10,23 @@ pub struct Index {
     pub change_percent: f64,
     pub last_updated: DateTime<Utc>,
 }
+
+impl Index {
+    pub fn new(
+        id: i64,
+        symbol: String,
+        name: String,
+        price: f64,
+        change_percent: f64,
+        last_updated: DateTime<Utc>
+    ) -> Self {
+        Self {
+            id,
+            symbol,
+            name,
+            price,
+            change_percent,
+            last_updated,
+        }
+    }
+}
