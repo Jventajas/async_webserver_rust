@@ -13,10 +13,7 @@ pub struct DataSyncService {
 }
 
 impl DataSyncService {
-    pub fn new(database: Database) -> Self {
-        let symbols = env::var("SYMBOLS").expect("SYMBOLS environment variable not set");
-        let symbols = symbols.split(",").map(|s| s.to_string()).collect();
-
+    pub fn new(database: Database, symbols: Vec<String>) -> Self {
         Self {
             stock_client: StockClient::new(),
             symbols,
