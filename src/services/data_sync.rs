@@ -1,15 +1,22 @@
+use std::env;
 use tokio::time;
 use tracing::info;
+use crate::services::stock_client::StockClient;
 
 pub struct DataSyncService {
-
+    stock_client: StockClient,
+    symbols: Vec<String>,
 }
 
 impl DataSyncService {
 
     pub fn new() -> Self {
-        Self {
+        let symbols = env::var("SYMBOLS").expect("SYMBOLS environment variable not set");
+        let symbols = symbols.split(",").map(|s| s.to_string()).collect();
 
+        Self {
+            stock_client: StockClient::new(),
+            symbols,
         }
     }
 

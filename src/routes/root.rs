@@ -3,14 +3,14 @@ use crate::server::route::Route;
 use crate::server::request::Request;
 use crate::server::response::Response;
 use crate::server::methods::HttpMethod;
-use crate::models::index::Index;
 
 use askama::Template;
+use crate::models::symbol::Symbol;
 
 #[derive(Template)]
 #[template(path = "index.html")]
-struct IndexTemplate {
-    indexes: Vec<Index>,
+struct SymbolTemplate {
+    symbols: Vec<Symbol>,
 }
 
 pub struct Root {
@@ -26,7 +26,8 @@ impl Root {
 #[async_trait::async_trait]
 impl Route for Root {
     async fn handle(&self, req: Request) -> Result<Response, ServerError> {
-        let indexes = vec![Index::new(1, "SYMBOL".to_string(), "Sample Name".to_string(), 100.0, 1.5, chrono::Utc::now())
+        let symbols = vec![
+            Symbol::new(1, "AAPL".to_string(), 100.0, 0.0, 100.0, 1000, "2020-01-01".to_string(), chrono::Utc::now())
         ];
 
         if let Some(accept) = req.headers().get("accept") {
@@ -37,7 +38,7 @@ impl Route for Root {
             }
         }
 
-        let template = IndexTemplate { indexes };
+        let template = SymbolTemplate { symbols };
         let html = template.render()?;
 
         Ok(
