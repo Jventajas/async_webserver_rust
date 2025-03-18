@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let database = Database::new(database_url).await?;
 
     info!("Starting data sync service...");
-    DataSyncService::new().sync_data(30).await;
+    DataSyncService::new(database).sync_data(30).await;
 
     info!("Spinning up server...");
 
