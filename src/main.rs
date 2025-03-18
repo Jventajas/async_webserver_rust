@@ -12,6 +12,7 @@ use tokio::net::TcpListener;
 
 use crate::server::server::HttpServer;
 use crate::services::data_sync::DataSyncService;
+use crate::services::database::Database;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -24,6 +25,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .expect("IP_ADDRESS environment variable not set, server cannot start");
     let port = std::env::var("PORT")
         .expect("PORT environment variable not set, server cannot start");
+    let database_url = std::env::var("DATABASE_URL")
+        .expect("DATABASE_URL environment variable not set, server cannot start");
+
+    info!("Initializing database...");
+    let database = Database::new(database_url).await?;
 
     info!("Starting data sync service...");
     DataSyncService::new().sync_data(30).await;
