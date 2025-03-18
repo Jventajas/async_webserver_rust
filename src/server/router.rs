@@ -1,9 +1,8 @@
 use std::sync::Arc;
-use crate::server::errors::ServerError;
 use crate::server::request::Request;
 use crate::server::response::Response;
 use crate::server::route::Route;
-
+use crate::utils::error::ApplicationError;
 
 #[derive(Default)]
 pub struct Router {
@@ -21,7 +20,7 @@ impl Router {
         self.routes.push(route);
     }
 
-    pub async fn route(&self, req: Request) -> Result<Response, ServerError> {
+    pub async fn route(&self, req: Request) -> Result<Response, ApplicationError> {
         for route in &self.routes {
             if route.path_matches(&req.path()) && route.method_matches(&req.method()) {
                 return route.handle(req).await;

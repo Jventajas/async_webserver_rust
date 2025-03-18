@@ -2,6 +2,7 @@ mod server;
 mod routes;
 mod models;
 mod services;
+mod utils;
 
 use std::env;
 use dotenv::dotenv;
@@ -37,13 +38,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     info!("Initializing database...");
     let database = Database::new(database_url).await?;
+    let database_arc = Arc::new(database);
 
     info!("Starting data sync service...");
-    DataSyncService::new(database, symbols).sync_data(refresh_interval).await;
+    DataSyncService::new(Arc::clone(&database_arc), symbols).sync_data(refresh_interval).await;
 
     info!("Spinning up server...");
 
-    let http_server = HttpServer::new();
+    let http_server = HttpServer::new(Arc::clone(&database_arc));
     let http_server = Arc::new(http_server);
     let listener = TcpListener::bind(format!("{}:{}", ip_address, port)).await?;
 

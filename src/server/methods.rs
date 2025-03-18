@@ -1,4 +1,4 @@
-use crate::server::errors::ServerError;
+use crate::utils::error::ApplicationError;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HttpMethod {
@@ -9,7 +9,7 @@ pub enum HttpMethod {
 }
 
 impl TryFrom<&str> for HttpMethod {
-    type Error = ServerError;
+    type Error = ApplicationError;
 
     fn try_from(method_str: &str) -> Result<Self, Self::Error> {
         match method_str {
@@ -17,7 +17,7 @@ impl TryFrom<&str> for HttpMethod {
             "POST" => Ok(HttpMethod::POST),
             "PUT" => Ok(HttpMethod::PUT),
             "DELETE" => Ok(HttpMethod::DELETE),
-            _ => Err(ServerError::InvalidMethod(method_str.to_string())),
+            _ => Err(ApplicationError::InvalidHttpMethod(method_str.to_string())),
         }
     }
 }

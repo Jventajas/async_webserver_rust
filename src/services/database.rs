@@ -1,28 +1,15 @@
 use sqlx::{sqlite::SqlitePool, migrate::MigrateDatabase, Sqlite, Pool, Row};
-use std::env;
-use tracing::{info, error};
+use tracing::{info};
 use crate::models::symbol::Symbol;
-use thiserror::Error;
 use chrono::{DateTime, Utc};
-
-#[derive(Debug, Error)]
-pub enum DatabaseError {
-    #[error("Database error: {0}")]
-    SqlxError(#[from] sqlx::Error),
-
-    #[error("Missing database URL")]
-    MissingDatabaseUrl,
-
-    #[error("Date parsing error: {0}")]
-    DateParseError(#[from] chrono::ParseError),
-}
+use crate::utils::error::ApplicationError;
 
 pub struct Database {
     pool: Pool<Sqlite>,
 }
 
 impl Database {
-    pub async fn new(database_url: String) -> Result<Self, DatabaseError> {
+    pub async fn new(database_url: String) -> Result<Self, ApplicationError> {
         if !Sqlite::database_exists(&database_url).await.unwrap_or(false) {
             info!("Creating database at {}", database_url);
             Sqlite::create_database(&database_url).await?;
@@ -34,10 +21,10 @@ impl Database {
         Ok(Self { pool })
     }
 
-    async fn init_database(pool: &Pool<Sqlite>) -> Result<(), DatabaseError> {
+    async fn init_database(pool: &Pool<Sqlite>) -> Result<(), ApplicationError> {
         info!("Initializing database tables");
 
-        let result = sqlx::query(
+        sqlx::query(
             "CREATE TABLE IF NOT EXISTS symbols (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 symbol TEXT NOT NULL UNIQUE,
@@ -55,7 +42,7 @@ impl Database {
         Ok(())
     }
 
-    pub async fn save_symbol(&self, symbol: &Symbol) -> Result<i64, DatabaseError> {
+    pub async fn save_symbol(&self, symbol: &Symbol) -> Result<i64, ApplicationError> {
         let last_updated_str = symbol.last_updated.to_rfc3339();
 
         let result = sqlx::query(
@@ -85,7 +72,7 @@ impl Database {
         Ok(id)
     }
 
-    pub async fn get_all_symbols(&self) -> Result<Vec<Symbol>, DatabaseError> {
+    pub async fn get_all_symbols(&self) -> Result<Vec<Symbol>, ApplicationError> {
         let rows = sqlx::query(
             "SELECT id, symbol, price, change_percent, previous_close, volume, trading_day, last_updated
          FROM symbols"
@@ -116,7 +103,7 @@ impl Database {
     }
 
 
-    pub async fn get_symbol_by_ticker(&self, ticker: &str) -> Result<Option<Symbol>, DatabaseError> {
+    pub async fn get_symbol_by_ticker(&self, ticker: &str) -> Result<Option<Symbol>, ApplicationError> {
         let row = sqlx::query(
             "SELECT id, symbol, price, change_percent, previous_close, volume, trading_day, last_updated
          FROM symbols WHERE symbol = ?"

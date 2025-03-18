@@ -1,4 +1,4 @@
-use crate::server::errors::ServerError;
+use std::sync::Arc;
 use crate::server::route::Route;
 use crate::server::request::Request;
 use crate::server::response::Response;
@@ -6,6 +6,8 @@ use crate::server::methods::HttpMethod;
 
 use askama::Template;
 use crate::models::symbol::Symbol;
+use crate::services::database::Database;
+use crate::utils::error::ApplicationError;
 
 #[derive(Template)]
 #[template(path = "index.html")]
@@ -14,21 +16,20 @@ struct SymbolTemplate {
 }
 
 pub struct Root {
-
+    database: Arc<Database>,
 }
 
 impl Root {
-    pub fn new() -> Self {
-        Self { }
+    pub fn new(database: Arc<Database>) -> Self {
+        Self { database }
     }
 }
 
+
 #[async_trait::async_trait]
 impl Route for Root {
-    async fn handle(&self, req: Request) -> Result<Response, ServerError> {
-        let symbols = vec![
-            Symbol::new(1, "AAPL".to_string(), 100.0, 0.0, 100.0, 1000, "2020-01-01".to_string(), chrono::Utc::now())
-        ];
+    async fn handle(&self, req: Request) -> Result<Response, ApplicationError> {
+        let symbols = self.database.get_all_symbols().await?;
 
         if let Some(accept) = req.headers().get("accept") {
             if accept.contains("application/json") {

@@ -1,6 +1,6 @@
+use std::sync::Arc;
 use crate::services::database::Database;
 use crate::services::stock_client::StockClient;
-use std::env;
 use tokio::time;
 use tracing::info;
 
@@ -9,11 +9,11 @@ const SYMBOL_FETCH_DELAY: u64 = 12;
 pub struct DataSyncService {
     stock_client: StockClient,
     symbols: Vec<String>,
-    database: Database,
+    database: Arc<Database>,
 }
 
 impl DataSyncService {
-    pub fn new(database: Database, symbols: Vec<String>) -> Self {
+    pub fn new(database: Arc<Database>, symbols: Vec<String>) -> Self {
         Self {
             stock_client: StockClient::new(),
             symbols,

@@ -2,11 +2,11 @@ use std::fs;
 use std::path::Path;
 use async_trait::async_trait;
 
-use crate::server::errors::ServerError;
 use crate::server::route::Route;
 use crate::server::request::Request;
 use crate::server::response::Response;
 use crate::server::methods::HttpMethod;
+use crate::utils::error::ApplicationError;
 
 pub struct StaticFiles {
     base_path: String,
@@ -36,7 +36,7 @@ impl StaticFiles {
 
 #[async_trait]
 impl Route for StaticFiles {
-    async fn handle(&self, req: Request) -> Result<Response, ServerError> {
+    async fn handle(&self, req: Request) -> Result<Response, ApplicationError> {
         let path = req.path().trim_start_matches('/');
         let file_path = Path::new(&self.base_path).join(path);
 

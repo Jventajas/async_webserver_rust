@@ -1,38 +1,32 @@
-use std::collections::HashMap;
-use tokio::io::{AsyncReadExt, AsyncWriteExt, BufReader};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use std::error::Error;
 use std::convert::TryFrom;
 use std::sync::Arc;
-use getset::Getters;
 use tracing::info;
 
-use crate::server::errors::ServerError;
-use crate::server::methods::HttpMethod;
 use crate::server::request::Request;
 use crate::server::router::Router;
 use crate::server::route::Route;
 use crate::routes::root::Root;
 use crate::routes::static_files::StaticFiles;
-
+use crate::services::database::Database;
 
 pub struct HttpServer {
     router: Router,
 }
 
 impl HttpServer {
-    pub fn new() -> Self {
+    pub fn new(database: Arc<Database>) -> Self {
         let mut routes: Vec<Arc<dyn Route>> = Vec::new();
 
-        let root = Arc::new(Root::new());
+        let root = Arc::new(Root::new(Arc::clone(&database)));
         routes.push(root);
 
         let static_files = Arc::new(StaticFiles::new("static".to_string()));
         routes.push(static_files);
 
-        let mut router = Router::new(routes);
-
-
+        let router = Router::new(routes);
 
         Self {
             router,

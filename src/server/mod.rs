@@ -1,5 +1,4 @@
 pub mod server;
-pub mod errors;
 pub mod methods;
 pub mod request;
 pub mod response;
