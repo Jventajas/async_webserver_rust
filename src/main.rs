@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .expect("PORT environment variable not set, server cannot start");
 
     info!("Starting data sync service...");
-    DataSyncService::new().sync_data(900).await;
+    DataSyncService::new().sync_data(30).await;
 
     info!("Spinning up server...");
 
