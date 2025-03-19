@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS indexes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    symbol TEXT NOT NULL UNIQUE,
-    name TEXT NOT NULL,
-    price REAL NOT NULL,
-    last_updated INTEGER NOT NULL
-);
