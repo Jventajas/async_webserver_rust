@@ -4,7 +4,7 @@ use crate::services::stock_client::StockClient;
 use tokio::time;
 use tracing::info;
 
-const SYMBOL_FETCH_DELAY: u64 = 12;
+const SYMBOL_FETCH_DELAY: u64 = 1;
 
 pub struct DataSyncService {
     stock_client: StockClient,
@@ -36,24 +36,23 @@ impl DataSyncService {
                 for symbol in &symbols {
                     match stock_client.fetch_symbol_quote(symbol).await {
                         Ok(quote_response) => {
-                            match stock_client.parse_quote_to_symbol(quote_response) {
+                            match stock_client.parse_quote_to_symbol(quote_response, symbol) {
                                 Ok(symbol_data) => {
                                     info!(
-                                        "Fetched data for {}: price=${}, change={}%, volume={}",
-                                        symbol_data.symbol,
-                                        symbol_data.price,
-                                        symbol_data.change_percent,
-                                        symbol_data.volume
-                                    );
+                                    "Fetched data for {}: price=${:.2}, change={:.2}%",
+                                    symbol_data.symbol,
+                                    symbol_data.price,
+                                    symbol_data.change_percent
+                                );
 
                                     match database.save_symbol(&symbol_data).await {
                                         Ok(id) => {
                                             info!("Saved symbol data to database with ID: {}", id)
                                         }
                                         Err(e) => info!(
-                                            "Failed to save data for {} to database: {}",
-                                            symbol, e
-                                        ),
+                                        "Failed to save data for {} to database: {}",
+                                        symbol, e
+                                    ),
                                     }
                                 }
                                 Err(e) => info!("Failed to parse data for {}: {}", symbol, e),

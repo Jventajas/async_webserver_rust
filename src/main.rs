@@ -21,8 +21,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
     tracing_subscriber::fmt::init();
 
-    let api_key = std::env::var("ALPHA_VANTAGE_API_KEY")
-        .expect("API_KEY environment variable not set, server cannot start");
     let refresh_interval = std::env::var("REFRESH_INTERVAL")
         .expect("REFRESH_INTERVAL environment variable not set")
         .parse::<u64>()

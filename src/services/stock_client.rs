@@ -1,51 +1,21 @@
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::env;
-use thiserror::Error;
 use crate::models::symbol::Symbol;
-
-#[derive(Debug, Error)]
-pub enum StockClientError {
-    #[error("API request failed: {0}")]
-    RequestFailed(#[from] reqwest::Error),
-
-    #[error("Failed to parse response: {0}")]
-    ParseError(#[from] serde_json::Error),
-
-    #[error("API error: {0}")]
-    ApiError(String),
-}
+use crate::utils::error::ApplicationError;
+use chrono::Utc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SymbolQuoteResponse {
-    #[serde(rename = "Global Quote")]
-    pub global_quote: GlobalQuote,
+    pub c: f64, // Current price
+    pub d: f64, // Change
+    pub dp: f64, // Percent change
+    pub h: f64, // High price of the day
+    pub l: f64, // Low price of the day
+    pub o: f64, // Open price of the day
+    pub pc: f64, // Previous close price
+    pub t: i64, // Timestamp
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct GlobalQuote {
-    #[serde(rename = "01. symbol")]
-    pub symbol: String,
-    #[serde(rename = "02. open")]
-    pub open: String,
-    #[serde(rename = "03. high")]
-    pub high: String,
-    #[serde(rename = "04. low")]
-    pub low: String,
-    #[serde(rename = "05. price")]
-    pub price: String,
-    #[serde(rename = "06. volume")]
-    pub volume: String,
-    #[serde(rename = "07. latest trading day")]
-    pub latest_trading_day: String,
-    #[serde(rename = "08. previous close")]
-    pub previous_close: String,
-    #[serde(rename = "09. change")]
-    pub change: String,
-    #[serde(rename = "10. change percent")]
-    pub change_percent: String,
-}
-
 
 pub struct StockClient {
     http_client: Client,
@@ -54,12 +24,11 @@ pub struct StockClient {
 }
 
 impl StockClient {
-
     pub fn new() -> Self {
-        let api_key = env::var("ALPHA_VANTAGE_API_KEY")
-            .expect("ALPHA_VANTAGE_API_KEY must be set");
-        let base_url = env::var("ALPHA_VANTAGE_BASE_URL")
-            .expect("ALPHA_VANTAGE_BASE_URL must be set");
+        let api_key = env::var("FINNHUB_API_KEY")
+            .expect("FINNHUB_API_KEY must be set");
+        let base_url = env::var("FINNHUB_BASE_URL")
+            .unwrap_or_else(|_| String::from("https://finnhub.io/api/v1"));
 
         Self {
             http_client: Client::new(),
@@ -68,43 +37,34 @@ impl StockClient {
         }
     }
 
-    pub async fn fetch_symbol_quote(&self, symbol: &str) -> Result<SymbolQuoteResponse, StockClientError> {
+    pub async fn fetch_symbol_quote(&self, symbol: &str) -> Result<SymbolQuoteResponse, ApplicationError> {
         let url = format!(
-            "{}?function=GLOBAL_QUOTE&symbol={}&apikey={}",
+            "{}/quote?symbol={}&token={}",
             self.base_url, symbol, self.api_key
         );
 
-        let response = self.http_client
+        let symbol_data = self.http_client
             .get(&url)
             .send()
             .await?
             .json::<SymbolQuoteResponse>()
             .await?;
 
-        Ok(response)
+        Ok(symbol_data)
     }
 
-    pub fn parse_quote_to_symbol(&self, quote_response: SymbolQuoteResponse) -> Result<Symbol, StockClientError> {
-        let quote = quote_response.global_quote;
-        let price = quote.price.parse::<f64>().unwrap_or(0.0);
-
-        let change_percent = quote.change_percent
-            .trim_end_matches('%')
-            .parse::<f64>()
-            .unwrap_or(0.0);
-
-        let previous_close = quote.previous_close.parse::<f64>().unwrap_or(0.0);
-        let volume = quote.volume.parse::<i64>().unwrap_or(0);
-
+    pub fn parse_quote_to_symbol(&self, quote_response: SymbolQuoteResponse, symbol_name: &str) -> Result<Symbol, ApplicationError> {
         Ok(Symbol {
             id: 0, // Database will assign the ID
-            symbol: quote.symbol,
-            price,
-            change_percent,
-            previous_close,
-            volume,
-            trading_day: quote.latest_trading_day,
-            last_updated: chrono::Utc::now(),
+            symbol: symbol_name.to_string(),
+            price: quote_response.c,
+            change: quote_response.d,
+            change_percent: quote_response.dp,
+            high_price: quote_response.h,
+            low_price: quote_response.l,
+            open_price: quote_response.o,
+            previous_close: quote_response.pc,
+            last_updated: Utc::now(),
         })
     }
 }
