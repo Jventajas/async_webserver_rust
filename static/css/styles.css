@@ -171,3 +171,10 @@ h1 {
     background-color: #f8d7da;
     color: #721c24;
 }
+
+/* Add this to your styles.css file */
+.stock-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}

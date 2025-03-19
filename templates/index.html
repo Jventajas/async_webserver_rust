@@ -7,23 +7,24 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1>Market Indexes</h1>
+<h1>Stocks</h1>
 
 <div class="index-grid">
     {% for symbol in symbols %}
-    <div class="index-card">
-        <div class="index-name">{{ symbol.symbol }}</div>
-        <div class="index-price">${{ symbol.price }}</div>
-        <div class="index-change {% if symbol.change_percent >= 0.0 %}positive{% else %}negative{% endif %}">
-            {% if symbol.change_percent >= 0.0 %}+{% endif %}{{ symbol.change_percent }}%
-        </div>
+    <a href="/{{ symbol.symbol }}" class="stock-link">
+        <div class="index-card">
+            <div class="index-name">{{ symbol.symbol }}</div>
+            <div class="index-price">${{ symbol.price }}</div>
+            <div class="index-change {% if symbol.change_percent >= 0.0 %}positive{% else %}negative{% endif %}">
+                {% if symbol.change_percent >= 0.0 %}+{% endif %}{{ symbol.change_percent }}%
+            </div>
 
-        <div class="index-updated">
-            Updated: {{ symbol.last_updated.format("%Y-%m-%d %H:%M:%S") }}
+            <div class="index-updated">
+                Updated: {{ symbol.last_updated.format("%Y-%m-%d %H:%M:%S") }}
+            </div>
         </div>
-    </div>
+    </a>
     {% endfor %}
-
 </div>
 
 </body>
