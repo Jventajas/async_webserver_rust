@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ symbol.symbol }} - Market Data</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="back-link"><a href="/">← Back to Market Indexes</a></div>
+<div class="detail-container">
+    <h1>{{ symbol.symbol }}</h1>
+
+    <div class="price-section">
+        <div class="current-price">${{ symbol.price }}</div>
+        <div class="price-change {% if symbol.change_percent >= 0.0 %}positive{% else %}negative{% endif %}">
+            {{ symbol.change }} ({% if symbol.change_percent >= 0.0 %}+{% endif %}{{ symbol.change_percent }}%)
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <span class="label">Open:</span>
+            <span class="value">${{ symbol.open_price }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Previous Close:</span>
+            <span class="value">${{ symbol.previous_close }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Day High:</span>
+            <span class="value">${{ symbol.high_price }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Day Low:</span>
+            <span class="value">${{ symbol.low_price }}</span>
+        </div>
+    </div>
+
+    <div class="last-updated">
+        Last updated: {{ symbol.last_updated.format("%Y-%m-%d %H:%M:%S") }}
+    </div>
+</div>
+</body>
+</html>

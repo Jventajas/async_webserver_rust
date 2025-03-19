@@ -9,6 +9,7 @@ use crate::server::request::Request;
 use crate::server::router::Router;
 use crate::server::route::Route;
 use crate::routes::root::Root;
+use crate::routes::detail::Detail;
 use crate::routes::static_files::StaticFiles;
 use crate::services::database::Database;
 
@@ -22,6 +23,9 @@ impl HttpServer {
 
         let root = Arc::new(Root::new(Arc::clone(&database)));
         routes.push(root);
+
+        let detail = Arc::new(Detail::new(Arc::clone(&database)));
+        routes.push(detail);
 
         let static_files = Arc::new(StaticFiles::new("static".to_string()));
         routes.push(static_files);

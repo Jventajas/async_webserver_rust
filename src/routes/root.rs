@@ -1,10 +1,10 @@
 use std::sync::Arc;
+use askama::Template;
+
 use crate::server::route::Route;
 use crate::server::request::Request;
 use crate::server::response::Response;
 use crate::server::methods::HttpMethod;
-
-use askama::Template;
 use crate::models::symbol::Symbol;
 use crate::services::database::Database;
 use crate::utils::error::ApplicationError;
