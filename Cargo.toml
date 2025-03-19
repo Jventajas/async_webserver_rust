@@ -1,5 +1,5 @@
 [package]
-name = "stock_tracker"
+name = "async_rust_webserver"
 version = "0.1.0"
 edition = "2024"
 
