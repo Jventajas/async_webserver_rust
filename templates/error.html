@@ -7,10 +7,24 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<div class="error-container">
-  <div class="back-link"><a href="/">← Back to Market Indexes</a></div>
-  <h1>Error</h1>
-  <div class="error-message">{{ message }}</div>
+<!-- Top Navigation Bar -->
+<nav class="top-navbar">
+  <a href="/" class="navbar-brand">
+    <svg class="rust-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#DEA584" d="M254.4,16.2c-132.3,0-239.5,107.3-239.5,239.5c0,132.2,107.3,239.6,239.5,239.6
+            c132.3,0,239.6-107.3,239.6-239.6C494,123.5,386.6,16.2,254.4,16.2z M225.2,347.5l-29.9-95.3l-63.6,110.3h-33.3l82-142.3
+            c2.4-4,6-6.4,10.7-6.4h17.3c4.5,0,8,2.4,10.6,6.4l60,190.6h-31.3L225.2,347.5z M402,362.5H296.4v-28.5h105.6V362.5z"/>
+    </svg>
+    <div class="navbar-title">Market Data</div>
+  </a>
+</nav>
+
+<div class="content-container">
+  <div class="error-container">
+    <div class="back-link"><a href="/">← Back to Market Indexes</a></div>
+    <h1>Error</h1>
+    <div class="error-message">{{ message }}</div>
+  </div>
 </div>
 </body>
 </html>

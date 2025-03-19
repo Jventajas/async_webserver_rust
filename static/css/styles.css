@@ -1,16 +1,67 @@
+/* Rust color scheme */
+:root {
+    --rust-orange: #DEA584;
+    --rust-dark: #2A1E1D;
+    --rust-light: #F5F5F5;
+    --rust-accent: #A72145;
+    --rust-secondary: #67616D;
+    --rust-bg: #FBFAF7;
+}
+
 /* Base styles */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--rust-bg);
+}
+
+.content-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
+    padding-top: 70px; /* Space for fixed navbar */
 }
 
 h1 {
-    color: #333;
-    border-bottom: 2px solid #eee;
+    color: var(--rust-dark);
+    border-bottom: 2px solid var(--rust-orange);
     padding-bottom: 0.5rem;
+}
+
+/* Top Navigation Bar */
+.top-navbar {
+    background-color: var(--rust-dark);
+    color: var(--rust-light);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--rust-light);
+}
+
+.rust-icon {
+    height: 32px;
+    width: 32px;
+    margin-right: 10px;
+}
+
+.navbar-title {
+    font-size: 1.4rem;
+    font-weight: bold;
 }
 
 /* Navigation */
@@ -22,14 +73,14 @@ h1 {
 
 .nav a {
     text-decoration: none;
-    color: #0366d6;
+    color: var(--rust-accent);
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    background-color: #f5f5f5;
+    background-color: rgba(222, 165, 132, 0.1);
 }
 
 .nav a:hover {
-    background-color: #e5e5e5;
+    background-color: rgba(222, 165, 132, 0.2);
 }
 
 /* Index grid cards */
@@ -41,26 +92,29 @@ h1 {
 }
 
 .index-card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--rust-orange);
     border-radius: 8px;
     padding: 1rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: transform 0.2s;
+    background-color: var(--rust-light);
 }
 
 .index-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border-color: var(--rust-accent);
 }
 
 .index-name {
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
+    color: var(--rust-dark);
 }
 
 .index-symbol {
-    color: #666;
+    color: var(--rust-secondary);
     font-size: 0.9rem;
 }
 
@@ -68,6 +122,7 @@ h1 {
     font-size: 1.5rem;
     font-weight: bold;
     margin: 0.5rem 0;
+    color: var(--rust-dark);
 }
 
 .index-change {
@@ -75,7 +130,7 @@ h1 {
 }
 
 .index-updated {
-    color: #777;
+    color: var(--rust-secondary);
     font-size: 0.8rem;
     margin-top: 0.5rem;
 }
@@ -94,17 +149,19 @@ h1 {
 .ticker-symbol {
     font-size: 2rem;
     font-weight: bold;
+    color: var(--rust-dark);
 }
 
 .ticker-name {
     font-size: 1.2rem;
-    color: #666;
+    color: var(--rust-secondary);
 }
 
 .ticker-price {
     font-size: 2.5rem;
     font-weight: bold;
     margin: 1rem 0;
+    color: var(--rust-dark);
 }
 
 .ticker-change {
@@ -116,15 +173,79 @@ h1 {
 }
 
 .ticker-updated {
-    color: #777;
+    color: var(--rust-secondary);
     margin: 1rem 0;
 }
 
-.back-button {
+.back-button, .back-link a {
     display: inline-block;
     margin-bottom: 1rem;
     text-decoration: none;
-    color: #0366d6;
+    color: var(--rust-accent);
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+/* Detail styles */
+.detail-container {
+    background-color: var(--rust-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid var(--rust-orange);
+}
+
+.price-section {
+    margin: 1.5rem 0;
+}
+
+.current-price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--rust-dark);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.detail-item {
+    padding: 0.5rem;
+    background-color: rgba(222, 165, 132, 0.1);
+    border-radius: 4px;
+}
+
+.detail-item .label {
+    color: var(--rust-secondary);
+    font-size: 0.9rem;
+}
+
+.detail-item .value {
+    font-weight: bold;
+    color: var(--rust-dark);
+}
+
+/* Error page */
+.error-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--rust-light);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid var(--rust-orange);
+}
+
+.error-message {
+    background-color: rgba(167, 33, 69, 0.05);
+    border-left: 4px solid var(--rust-accent);
+    padding: 1rem;
+    margin: 1rem 0;
 }
 
 /* Utility classes */
@@ -139,7 +260,7 @@ h1 {
 .last-updated {
     text-align: right;
     font-size: 0.8rem;
-    color: #999;
+    color: var(--rust-secondary);
     margin-top: 1rem;
 }
 
@@ -149,13 +270,13 @@ h1 {
 }
 
 @keyframes highlight {
-    0% { background-color: rgba(255, 255, 0, 0.5); }
+    0% { background-color: rgba(222, 165, 132, 0.3); }
     100% { background-color: transparent; }
 }
 
 .connection-status {
     position: fixed;
-    top: 10px;
+    top: 70px; /* Position below navbar */
     right: 10px;
     padding: 5px 10px;
     border-radius: 4px;

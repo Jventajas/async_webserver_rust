@@ -7,24 +7,38 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h1>Stocks</h1>
-
-<div class="index-grid">
-    {% for symbol in symbols %}
-    <a href="/{{ symbol.symbol }}" class="stock-link">
-        <div class="index-card">
-            <div class="index-name">{{ symbol.symbol }}</div>
-            <div class="index-price">${{ symbol.price }}</div>
-            <div class="index-change {% if symbol.change_percent >= 0.0 %}positive{% else %}negative{% endif %}">
-                {% if symbol.change_percent >= 0.0 %}+{% endif %}{{ symbol.change_percent }}%
-            </div>
-
-            <div class="index-updated">
-                Updated: {{ symbol.last_updated.format("%Y-%m-%d %H:%M:%S") }}
-            </div>
-        </div>
+<!-- Top Navigation Bar -->
+<nav class="top-navbar">
+    <a href="/" class="navbar-brand">
+        <svg class="rust-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#DEA584" d="M254.4,16.2c-132.3,0-239.5,107.3-239.5,239.5c0,132.2,107.3,239.6,239.5,239.6
+            c132.3,0,239.6-107.3,239.6-239.6C494,123.5,386.6,16.2,254.4,16.2z M225.2,347.5l-29.9-95.3l-63.6,110.3h-33.3l82-142.3
+            c2.4-4,6-6.4,10.7-6.4h17.3c4.5,0,8,2.4,10.6,6.4l60,190.6h-31.3L225.2,347.5z M402,362.5H296.4v-28.5h105.6V362.5z"/>
+        </svg>
+        <div class="navbar-title">Market Data</div>
     </a>
-    {% endfor %}
+</nav>
+
+<div class="content-container">
+    <h1>Stocks</h1>
+
+    <div class="index-grid">
+        {% for symbol in symbols %}
+        <a href="/{{ symbol.symbol }}" class="stock-link">
+            <div class="index-card">
+                <div class="index-name">{{ symbol.symbol }}</div>
+                <div class="index-price">${{ symbol.price }}</div>
+                <div class="index-change {% if symbol.change_percent >= 0.0 %}positive{% else %}negative{% endif %}">
+                    {% if symbol.change_percent >= 0.0 %}+{% endif %}{{ symbol.change_percent }}%
+                </div>
+
+                <div class="index-updated">
+                    Updated: {{ symbol.last_updated.format("%Y-%m-%d %H:%M:%S") }}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
 </div>
 
 </body>
